@@ -1,0 +1,16 @@
+[project]
+name = "bank1"
+version = "0.1.0"
+description = "Bank card and account number masking"
+authors = [
+    {name = "Your Name", email = "your@email.com"}
+]
+readme = "README.md"
+requires-python = ">=3.8"
+
+[build-system]
+requires = ["poetry-core>=2.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.dependencies]
+python = "^3.8"
