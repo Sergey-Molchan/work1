@@ -1,16 +1,35 @@
-[project]
+[tool.poetry]
 name = "bank1"
 version = "0.1.0"
 description = "Bank card and account number masking"
-authors = [
-    {name = "Your Name", email = "your@email.com"}
-]
+authors = ["Your Name <your@email.com>"]
 readme = "README.md"
-requires-python = ">=3.8"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^7.2.0"
+isort = "^5.13.2"
+mypy = "^1.8.0"
+black = "^24.2.0"
+pytest = "^7.4.0"
+pylint = "^3.1.0"  # Добавлено отсутствовавшее
 
 [build-system]
 requires = ["poetry-core>=2.0.0"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry.dependencies]
-python = "^3.8"
+[tool.poetry.scripts]
+bank-app = "src.widget:main"  # Исправлено с src.main на src.widget
+format = "isort . && black ."
+lint = "flake8 src/ && mypy src/"
+check = "pylint src/"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.isort]
+profile = "black"
+known_first_party = ["src"]

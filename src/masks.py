@@ -1,18 +1,12 @@
-def get_mask_card_number(card_number: str) -> str:
-    """Маскирует номер карты в формате 0000 00** **** 0000"""
-    return f"{card_number[:4]} {card_number[4:6]}** **** {card_number[-4:]}"
+def mask_card(number: str) -> str:
+    """Маскирует номер карты, оставляя первые 6 и последние 4 цифры."""
+    if len(number) != 16 or not number.isdigit():
+        raise ValueError("Некорректный номер карты")
+    return f"{number[:4]} {number[4:6]}** **** {number[-4:]}"
 
-def get_mask_account(account: str) -> str:
-    """Маскирует номер счета в формате **0000"""
-    return "**" + account[-4:]
 
-def mask_account_card(payment_info: str) -> str:
-    """Маскирует карту/счет в строке"""
-    parts = payment_info.split()
-    if parts[0] == "Счет":
-        return f"Счет {get_mask_account(parts[-1])}"
-    return f"{' '.join(parts[:-1])} {get_mask_card_number(parts[-1])}"
-
-def get_date(iso_date: str) -> str:
-    """Форматирует дату из ISO в ДД.ММ.ГГГГ"""
-    return f"{iso_date[8:10]}.{iso_date[5:7]}.{iso_date[:4]}"
+def mask_account(number: str) -> str:
+    """Маскирует номер счета, оставляя последние 4 цифры."""
+    if len(number) < 4 or not number.isdigit():
+        raise ValueError("Некорректный номер счета")
+    return f"**{number[-4:]}"
