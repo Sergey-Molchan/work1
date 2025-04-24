@@ -1,6 +1,7 @@
 import pytest
 from src.processing import filter_by_state, sort_by_date
 
+
 @pytest.fixture
 def test_transactions() -> list[dict]:
     """Фикстура с тестовыми транзакциями."""
@@ -11,11 +12,13 @@ def test_transactions() -> list[dict]:
         {'id': 4},  # Транзакция без статуса и даты
     ]
 
+
 def test_filter_by_state(test_transactions):
     """Тест фильтрации по статусу."""
     result = filter_by_state(test_transactions)
     assert len(result) == 2
     assert all(t['state'] == 'EXECUTED' for t in result)
+
 
 def test_sort_by_date(test_transactions):
     """Тест сортировки по дате."""

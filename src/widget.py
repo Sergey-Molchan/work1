@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
-from masks import mask_account, mask_card
+from src.masks import mask_account, mask_card
+
 
 def mask_account_card(data: str) -> str:
     """
