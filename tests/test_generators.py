@@ -2,6 +2,7 @@ from typing import List, Dict  # Добавляем этот импорт
 import pytest
 from src.generators import filter_by_currency, transaction_descriptions, card_number_generator
 
+
 # Остальной код остаётся без изменений
 
 
