@@ -17,4 +17,6 @@ def transaction_descriptions(transactions: List[Dict]) -> Iterator[str]:
 def card_number_generator(start: int, stop: int) -> Iterator[str]:
     """Генератор номеров карт в формате XXXX XXXX XXXX XXXX."""
     for num in range(start, stop + 1):
-        yield f"{num:016d}"[:16]  # Форматируем как 16-значный номер
+        num_str = f"{num:016d}"  # 16-значная строка с ведущими нулями
+        formatted = f"{num_str[:4]} {num_str[4:8]} {num_str[8:12]} {num_str[12:16]}"
+        yield formatted
