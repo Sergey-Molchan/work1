@@ -27,8 +27,8 @@ def test_transaction_descriptions(test_transactions):
 
 
 @pytest.mark.parametrize("start, stop, expected", [
-    (1, 3, ["0000000000000001", "0000000000000002", "0000000000000003"]),
-    (10, 12, ["0000000000000010", "0000000000000011", "0000000000000012"]),
+    (1, 3, ["0000 0000 0000 0001", "0000 0000 0000 0002", "0000 0000 0000 0003"]),
+    (10, 12, ["0000 0000 0000 0010", "0000 0000 0000 0011", "0000 0000 0000 0012"]),
 ])
 def test_card_number_generator(start, stop, expected):
     assert list(card_number_generator(start, stop)) == expected
