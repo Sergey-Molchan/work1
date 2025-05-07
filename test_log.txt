@@ -1,0 +1,6 @@
+2025-05-07 22:49:29 - Вызов: risky_function(10, 2)
+2025-05-07 22:49:29 - Результат: 5.0
+2025-05-07 22:49:29 - Вызов: risky_function(5, 0)
+2025-05-07 22:49:29 - Ошибка: ZeroDivisionError('division by zero')
+2025-05-07 22:49:29 - Вызов: risky_function(1, 0)
+2025-05-07 22:49:29 - Ошибка: ZeroDivisionError('division by zero')

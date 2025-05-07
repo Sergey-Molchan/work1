@@ -1,6 +1,6 @@
 import pytest
 import os
-from decorators import log
+from src.decorators import log
 
 
 @log("test_log.txt")
@@ -37,4 +37,5 @@ def test_error_logging(capsys: pytest.CaptureFixture) -> None:
     with pytest.raises(ZeroDivisionError):
         risky_function(1, 0)
     captured = capsys.readouterr()
-    assert "ZeroDivisionError" in captured.out
+    # Проверяем часть сообщения об ошибке
+    assert "Ошибка: ZeroDivisionError('division by zero')" in captured.err

@@ -1,5 +1,6 @@
 from datetime import datetime
 import functools
+import sys  # Добавлен импорт sys
 from typing import Callable, Optional, Any
 
 
@@ -9,7 +10,6 @@ def log(filename: Optional[str] = None) -> Callable:
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
-            # Формирование информации о вызове
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             func_name = func.__name__
             args_repr = [repr(arg) for arg in args]
@@ -23,15 +23,19 @@ def log(filename: Optional[str] = None) -> Callable:
             except Exception as e:
                 error_message = f"{timestamp} - Ошибка: {repr(e)}\n"
                 log_message += error_message
-                # Запись лога перед пробросом исключения
+                ...
+                print(log_message, end="", file=sys.stderr)  # Вывод всего сообщения
+
+                # Запись лога только один раз при ошибке
                 if filename:
                     with open(filename, "a", encoding="utf-8") as f:
                         f.write(log_message)
                 else:
-                    print(log_message, end="")
-                raise e  # Пробрасываем исключение дальше
+                    print(log_message, end="", file=sys.stderr)
 
-            # Запись лога при успешном выполнении
+                raise e  # Пробрасываем исключение
+
+            # Запись лога при успехе
             if filename:
                 with open(filename, "a", encoding="utf-8") as f:
                     f.write(log_message)
