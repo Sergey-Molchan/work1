@@ -23,8 +23,8 @@ def test_log_to_file() -> None:
 
     with open("test_log.txt", "r", encoding="utf-8") as f:
         logs = f.read()
-        assert "Результат: 5.0" in logs
-        assert "ZeroDivisionError" in logs
+        assert "risky_function ok" in logs
+        assert "risky_function error: ZeroDivisionError. Inputs: (5, 0)" in logs
 
 
 def test_log_to_console(capsys: pytest.CaptureFixture) -> None:
@@ -33,9 +33,14 @@ def test_log_to_console(capsys: pytest.CaptureFixture) -> None:
     assert "Результат: 'HELLO'" in captured.out
 
 
-def test_error_logging(capsys: pytest.CaptureFixture) -> None:
+def test_error_logging() -> None:
+    if os.path.exists("test_log.txt"):
+        os.remove("test_log.txt")
+
     with pytest.raises(ZeroDivisionError):
         risky_function(1, 0)
-    captured = capsys.readouterr()
-    # Проверяем часть сообщения об ошибке
-    assert "Ошибка: ZeroDivisionError('division by zero')" in captured.err
+
+    with open("test_log.txt", "r", encoding="utf-8") as f:
+        logs = f.read()
+        assert "risky_function error: ZeroDivisionError('division by zero'). Inputs: (1, 0)" in logs
+

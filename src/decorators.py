@@ -1,48 +1,45 @@
-from datetime import datetime
-import functools
-import sys  # Добавлен импорт sys
 from typing import Callable, Optional, Any
+import functools
+import sys
 
 
 def log(filename: Optional[str] = None) -> Callable:
-    """Декоратор для логирования вызовов функций и ошибок."""
+    """Декоратор для логирования вызовов функций и ошибок в формате:
+    - При успехе: '{func_name} ok'
+    - При ошибке: '{func_name} error: {error}. Inputs: {args}, {kwargs}'
+    """
 
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
-            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             func_name = func.__name__
-            args_repr = [repr(arg) for arg in args]
-            kwargs_repr = [f"{k}={repr(v)}" for k, v in kwargs.items()]
-            signature = ", ".join(args_repr + kwargs_repr)
-            log_message = f"{timestamp} - Вызов: {func_name}({signature})\n"
+            args_repr = ", ".join(map(repr, args))
+            kwargs_repr = ", ".join(f"{k}={repr(v)}" for k, v in kwargs.items())
+            signature = f"({args_repr}{', ' if kwargs_repr else ''}{kwargs_repr})"
 
             try:
                 result = func(*args, **kwargs)
-                log_message += f"{timestamp} - Результат: {repr(result)}\n"
-            except Exception as e:
-                error_message = f"{timestamp} - Ошибка: {repr(e)}\n"
-                log_message += error_message
-                ...
-                print(log_message, end="", file=sys.stderr)  # Вывод всего сообщения
+                status_message = f"{func_name} ok\n"
 
-                # Запись лога только один раз при ошибке
                 if filename:
                     with open(filename, "a", encoding="utf-8") as f:
-                        f.write(log_message)
+                        f.write(status_message)
                 else:
-                    print(log_message, end="", file=sys.stderr)
+                    print(status_message, end="")
 
-                raise e  # Пробрасываем исключение
+                return result
+            except Exception as e:
+                error_message = (
+                    f"{func_name} error: {repr(e)}. Inputs: {signature}\n"  # Исправлено здесь
+                )
 
-            # Запись лога при успехе
-            if filename:
-                with open(filename, "a", encoding="utf-8") as f:
-                    f.write(log_message)
-            else:
-                print(log_message, end="")
+                if filename:
+                    with open(filename, "a", encoding="utf-8") as f:
+                        f.write(error_message)
+                else:
+                    print(error_message, end="", file=sys.stderr)
 
-            return result
+                raise e
 
         return wrapper
 
