@@ -1,0 +1,1 @@
+risky_function error: ZeroDivisionError('division by zero'). Inputs: (1, 0)
