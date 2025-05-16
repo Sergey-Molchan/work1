@@ -1,7 +1,7 @@
 def mask_card(number: str) -> str:
-    """Маскирует номер карты, оставляя первые 6 и последние 4 цифры."""
     if len(number) != 16 or not number.isdigit():
         raise ValueError("Некорректный номер карты")
+    # Форматирование с пробелами
     return f"{number[:4]} {number[4:6]}** **** {number[-4:]}"
 
 
