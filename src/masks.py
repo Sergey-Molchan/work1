@@ -1,8 +1,9 @@
 def mask_card(number: str) -> str:
-    """Маскирует номер карты, оставляя первые 6 и последние 4 цифры."""
-    if len(number) != 16 or not number.isdigit():
+    # Удаляем все нецифровые символы
+    cleaned = ''.join(filter(str.isdigit, number))
+    if len(cleaned) != 16:
         raise ValueError("Некорректный номер карты")
-    return f"{number[:4]} {number[4:6]}** **** {number[-4:]}"
+    return f"{cleaned[:4]} {cleaned[4:6]}** **** {cleaned[-4:]}"
 
 
 def mask_account(number: str) -> str:

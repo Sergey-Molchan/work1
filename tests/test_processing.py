@@ -1,6 +1,7 @@
+from typing import Dict
+from tomlkit import datetime
 import pytest
 from src.processing import filter_by_state, sort_by_date
-
 
 @pytest.fixture
 def test_transactions() -> list[dict]:
@@ -24,3 +25,11 @@ def test_sort_by_date(test_transactions):
     """Тест сортировки по дате."""
     result = sort_by_date(test_transactions)
     assert result[0]['id'] == 2  # Самая свежая транзакция
+
+
+def get_date_key(x: Dict[str, str | int]) -> datetime:
+    date_str = x.get('date', '')
+    try:
+        return datetime.fromisoformat(date_str.replace('Z', ''))
+    except (ValueError, AttributeError):
+        return datetime.min

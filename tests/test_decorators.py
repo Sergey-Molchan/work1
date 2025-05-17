@@ -1,17 +1,15 @@
 import pytest
 import os
-from src.decorators import log
+from src.decorators import log_to_file, log_to_console  # Правильные импорты
 
-
-@log("test_log.txt")
+# Используем актуальные декораторы
+@log_to_file
 def risky_function(a: int, b: int) -> float:
     return a / b
 
-
-@log()
+@log_to_console
 def safe_function(text: str) -> str:
     return text.upper()
-
 
 def test_log_to_file() -> None:
     if os.path.exists("test_log.txt"):
@@ -26,12 +24,10 @@ def test_log_to_file() -> None:
         assert "risky_function ok" in logs
         assert "risky_function error: ZeroDivisionError. Inputs: (5, 0)" in logs
 
-
 def test_log_to_console(capsys: pytest.CaptureFixture) -> None:
     safe_function("hello")
     captured = capsys.readouterr()
     assert "Результат: 'HELLO'" in captured.out
-
 
 def test_error_logging() -> None:
     if os.path.exists("test_log.txt"):
@@ -42,5 +38,4 @@ def test_error_logging() -> None:
 
     with open("test_log.txt", "r", encoding="utf-8") as f:
         logs = f.read()
-        assert "risky_function error: ZeroDivisionError('division by zero'). Inputs: (1, 0)" in logs
-
+        assert "risky_function error: ZeroDivisionError. Inputs: (1, 0)" in logs
