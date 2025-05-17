@@ -17,16 +17,23 @@ def convert_to_rub(transaction: Dict) -> float:
         return float(amount)
 
     api_key = os.getenv('EXCHANGE_API_KEY')
-    url = f"https://api.apilayer.com/exchangerates_data/latest?base={currency}"
+    url = "https://api.apilayer.com/exchangerates_data/convert"
+    params = {
+        'from': currency,
+        'to': 'RUB',
+        'amount': amount
+    }
     headers = {'apikey': api_key}
 
-    response = requests.get(url, headers=headers, timeout=10)
-    # Проверяем статус ответа
+    response = requests.get(url, headers=headers, params=params, timeout=10)
+
+    # Обработка ошибок
     if response.status_code != 200:
-        raise ValueError(f"Ошибка API: код {response.status_code}")
+        error_info = response.json().get('error', 'Неизвестная ошибка')
+        raise ValueError(f"Ошибка API ({response.status_code}): {error_info}")
 
-    rates = response.json().get('rates', {})
-    if 'RUB' not in rates:
-        raise ValueError("Курс RUB не найден")
+    result = response.json().get('result')
+    if not result:
+        raise ValueError("Не удалось получить результат конвертации")
 
-    return float(amount) * rates['RUB']
+    return round(result, 2)

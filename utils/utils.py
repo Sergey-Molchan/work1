@@ -1,12 +1,14 @@
-import json
-from typing import List, Dict, Any
-
+import logging
+logging.basicConfig(level=logging.INFO)
 
 def load_transactions(file_path: str) -> List[Dict[str, Any]]:
-    """Загружает транзакции из JSON-файла."""
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
             return data if isinstance(data, list) else []
-    except (FileNotFoundError, json.JSONDecodeError):
+    except FileNotFoundError:
+        logging.error(f"Файл {file_path} не найден")
+        return []
+    except json.JSONDecodeError:
+        logging.error(f"Ошибка декодирования JSON в файле {file_path}")
         return []
