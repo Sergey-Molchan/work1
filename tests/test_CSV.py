@@ -1,25 +1,57 @@
-import pandas as pd
-from unittest.mock import patch, mock_open
-import pytest
+import unittest
 from pathlib import Path
+from tempfile import TemporaryDirectory
+import csv
 from src.reader.transactions_csv import read_transactions_csv
 
 
+class TestReadTransactionsCSV(unittest.TestCase):
+    def setUp(self):
+        self.temp_dir = TemporaryDirectory()
+        self.test_dir = Path(self.temp_dir.name)
 
-@patch("pandas.read_csv")
-@patch("pathlib.Path.exists", return_value=True)
-def test_read_transaction_csv(mock_exists, mock_read_csv):
-    # Тестовые данные
-    test_data = pd.DataFrame({"ID": [1, 2], "Amount": [100, 200]})
-    mock_read_csv.return_value = test_data
+    def tearDown(self):
+        self.temp_dir.cleanup()
 
-    result = read_transactions_csv(Path("fake_path.csv"))
+    def test_read_valid_csv(self):
+        """Проверка чтения корректного CSV-файла"""
+        file_path = self.test_dir / "valid.csv"
+        test_data = [
+            {"id": "1", "amount": "100.0"},
+            {"id": "2", "amount": "200.0"}
+        ]
 
-    mock_exists.assert_called_once()
-    mock_read_csv.assert_called_once_with(Path("fake_path.csv"))
-    assert result.equals(test_data)
+        with open(file_path, "w") as f:
+            writer = csv.DictWriter(f, fieldnames=["id", "amount"])
+            writer.writeheader()
+            writer.writerows(test_data)
 
-@patch("pathlib.Path.exists", return_value=False)
-def test_read_transactions_csv_file_not_found(mock_exists):
-    with pytest.raises(FileNotFoundError):
-        read_transactions_csv(Path("nonexistent.csv"))
+        result = read_transactions_csv(file_path)
+        self.assertEqual(result, test_data)
+
+    def test_file_not_found(self):
+        """Проверка обработки отсутствующего файла"""
+        with self.assertRaises(FileNotFoundError):
+            read_transactions_csv(Path("/non/existent/path.csv"))
+
+    def test_invalid_csv_format(self):
+        """Проверка обработки битого CSV-файла"""
+        file_path = self.test_dir / "invalid.csv"
+        with open(file_path, "w") as f:
+            f.write("id,amount\n")
+            f.write("1,100.0\n")
+            f.write("broken,data,extra,columns\n")  # Нарушенная структура
+
+        with self.assertRaises(ValueError) as cm:
+            read_transactions_csv(file_path)
+        self.assertIn("Ошибка при чтении CSV файла", str(cm.exception))
+
+    def test_directory_instead_of_file(self):
+        """Проверка обработки директории вместо файла"""
+        with self.assertRaises(ValueError) as cm:
+            read_transactions_csv(self.test_dir)
+        self.assertIn("Ошибка при чтении CSV файла", str(cm.exception))
+
+
+if __name__ == "__main__":
+    unittest.main()

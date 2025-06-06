@@ -1,5 +1,4 @@
 import json
-from pathlib import Path
 from typing import List, Dict, Any
 from src.logger_config import setup_logger
 
@@ -29,7 +28,7 @@ def load_transactions(file_path: str) -> List[Dict[str, Any]]:
             utils_logger.info(f"Успешно загружено {len(data)} транзакций из {file_path}")
             return data
 
-    except FileNotFoundError as e:
+    except FileNotFoundError :
         utils_logger.error(f"Файл не найден: {file_path}")
         raise
     except json.JSONDecodeError as e:

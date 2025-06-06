@@ -1,18 +1,29 @@
-import pandas as pd
+import csv
 from pathlib import Path
-from pandas import read_csv
-from src.reader.transaction_xlsx import read_transactions_excel
 
 
-def read_transactions_csv(file_path: Path) -> pd.DataFrame:
-    """Читает транзакции из CSV файла"""
+def read_transactions_csv(file_path: Path) -> list[dict]:
+    """Читает транзакции из CSV файла и возвращает список словарей."""
     if not file_path.exists():
         raise FileNotFoundError(f"Файл не найден {file_path}")
-    try:
-        return pd.read_csv(file_path)
-    except Exception as e:
-        raise ValueError(f"Ошибка при чтении CSV файла {e}")
 
-path_csv = Path("/Users/sergejmolcan/bank1/work1/Data/transactions.csv")
-df_csv = read_transactions_csv(path_csv)
-print(df_csv)
+    try:
+        with open(file_path, mode="r", encoding="utf-8") as file:
+            # Читаем все строки для проверки структуры
+            lines = file.readlines()
+            reader = csv.DictReader(lines)
+
+            # Проверяем, что все строки имеют одинаковое количество полей
+            dialect = csv.Sniffer().sniff(lines[0])
+            for line in lines[1:]:
+                if len(line.split(dialect.delimiter)) != len(reader.fieldnames):
+                    raise ValueError("Несогласованное количество полей в CSV файле")
+
+            # Если проверка прошла, читаем файл заново
+            file.seek(0)
+            return list(csv.DictReader(file))
+
+    except csv.Error as e:
+        raise ValueError(f"Ошибка формата CSV: {e}")
+    except Exception as e:
+        raise ValueError(f"Ошибка при чтении CSV файла: {e}")
