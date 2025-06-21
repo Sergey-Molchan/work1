@@ -1,5 +1,4 @@
 from unittest.mock import patch
-import pytest
 from typing import Dict
 from external_api.api import convert_to_rub
 
