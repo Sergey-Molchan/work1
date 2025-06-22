@@ -2,7 +2,7 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import pandas as pd
-from src.reader.transaction_xlsx import read_transactions_excel
+from src.reader.transactions_xlsx import read_transactions_excel
 
 
 class TestReadTransactionsExcel(unittest.TestCase):
