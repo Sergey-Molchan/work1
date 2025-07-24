@@ -5,6 +5,19 @@ from src.reader.transactions_xlsx import read_transactions_excel
 from pathlib import Path
 from typing import List, Dict
 import json
+from src.views import main_page
+from src.services import investment_bank
+from src.reports import spending_by_category
+import pandas as pd
+
+
+def run_all():
+    # Пример вызова функций
+    print(main_page("2023-01-20 14:30:00"))
+
+    df = pd.read_excel("data/operations.xlsx")
+    print(investment_bank("2023-01", df.to_dict("records"), 50))
+    print(spending_by_category(df, "Супермаркеты"))
 
 
 def load_transactions(file_type: str) -> List[Dict]:
